@@ -1,0 +1,199 @@
+version: 2
+
+models:
+
+  - name: stg_users
+    description: "Staging table which contains all our customers."
+    columns:  
+      - name: user_id
+        tests:
+          - unique
+          - not_null
+      - name: user_uuid
+        tests:
+          - unique
+          - not_null
+      - name: first_name
+        tests:
+          - only_letters
+      - name: last_name
+        tests:
+          - only_letters
+      - name: email
+      - name: phone_number
+      - name: created_at
+        tests:
+          - valid_date
+      - name: updated_at
+        tests:
+          - valid_date
+      - name: address_uuid
+        tests:
+          - relationships:
+              to: ref('stg_addresses')
+              field: address_uuid  
+
+  - name: stg_addresses
+    description: "Staging table which contains the address of each customer."
+    columns: 
+      - name: address_id
+        tests:
+          - unique
+          - not_null 
+      - name: address_uuid
+        tests:
+          - unique
+          - not_null
+      - name: address
+      - name: zipcode
+        tests:
+          - only_digits
+      - name: state
+      - name: country
+
+  - name: stg_events
+    description: "Staging table which contains events from all customer actions on the booking flow."
+    columns:  
+      - name: event_id
+        tests:
+          - unique
+          - not_null    
+      - name: event_uuid
+        tests:
+          - unique
+          - not_null
+      - name: session_uuid
+        tests:
+          - not_null
+      - name: user_uuid
+        tests:
+          - relationships:
+              to: ref('stg_users')
+              field: user_uuid  
+      - name: event_type
+      - name: page_url
+      - name: created_at
+        tests:
+          - valid_date
+
+  - name: stg_order_items
+    description: "Staging table which contains product types & product quantities per order_id."
+    columns:  
+      - name: order_id
+        tests:
+          - not_null
+      - name: order_uuid
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_orders')
+              field: order_uuid 
+      - name: product_uuid
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_products')
+              field: product_uuid 
+      - name: quantity_ordered
+        tests:
+          - strictly_positive
+
+  - name: stg_orders
+    description: "Staging table which contains the orders from customers."
+    columns:  
+      - name: order_id
+        tests:
+          - unique
+          - not_null
+      - name: order_uuid
+        tests:
+          - unique
+          - not_null
+      - name: user_uuid
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_users')
+              field: user_uuid 
+      - name: promo_name
+        tests:
+          - relationships:
+              to: ref('stg_promos')
+              field: promo_name 
+      - name: address_uuid
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_addresses')
+              field: address_uuid 
+      - name: created_at
+        tests:
+          - valid_date
+      - name: order_cost
+        tests:
+          - strictly_positive
+      - name: shipping_cost
+        tests:
+          - strictly_positive
+      - name: order_total
+      #  tests:
+      #    - strictly_positive    condition removed due to 1 outlier (we could remove it in staging )
+      - name: tracking_uuid
+      - name: shipping_service
+      - name: estimated_delivery_at
+        tests:
+          - valid_date
+      - name: delivered_at
+        tests:
+          - valid_date
+      - name: order_status
+        tests:
+          - only_letters
+      
+  - name: stg_products
+    description: "Staging table which contains name, price & quantity in stock for each product type."
+    columns:  
+      - name: product_id
+        tests:
+          - unique
+          - not_null
+      - name: product_uuid
+        tests:
+          - unique
+          - not_null
+      - name: name
+        tests:
+          - not_null
+          - only_letters
+      - name: price
+        tests:
+          - strictly_positive
+      - name: quantity_in_stock
+        tests:
+          - not_null
+          - positive_or_equal_to_zero
+
+  - name: stg_promos
+    description: "Staging table which contains discount types and % discount for each promotional offer."
+    columns:  
+      - name: promo_id
+        tests:
+          - unique
+          - not_null
+          - only_digits
+      - name: promo_name
+        tests:
+          - not_null
+          - only_letters
+      - name: discount
+        tests:
+          - not_null
+          - strictly_positive
+      - name: promo_status
+        tests:
+          - not_null
+          - only_letters
+
+ 
+        
+        

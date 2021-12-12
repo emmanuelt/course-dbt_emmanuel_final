@@ -1,0 +1,153 @@
+
+version: 2
+
+models:
+
+  - name: dim_products
+    description: "Dimension table with all products data"
+    columns:  
+      - name: product_uuid
+        tests:
+          - unique
+          - not_null
+      - name: product_name
+        tests:
+          - not_null
+          - only_letters
+      - name: product_price
+        tests:
+          - strictly_positive
+      - name: product_quantity_in_stock
+        tests:
+          - not_null
+          - positive_or_equal_to_zero
+
+  - name: dim_users
+    description: "Dimension table with all customers data"
+    columns:  
+      - name: user_uuid
+        tests:
+          - unique
+          - not_null
+      - name: user_first_name
+        tests:
+          - only_letters
+      - name: user_last_name
+        tests:
+          - only_letters
+      - name: user_email
+      - name: user_phone_number
+      - name: user_creation_date
+        tests:
+          - valid_date
+      - name: user_last_update_date
+        tests:
+          - valid_date
+      - name: user_address
+        tests:
+          - not_null 
+      - name: user_zipcode
+        tests:
+          - only_digits
+      - name: user_state
+      - name: user_country
+      - name: user_first_web_activity_date
+        tests:
+          - valid_date
+      - name: user_last_web_activity_date
+        tests:
+          - valid_date
+      - name: user_days_since_last_web_activity
+        tests:
+          - positive_or_equal_to_zero
+      - name: user_web_sessions_count
+        tests:
+          - positive_or_equal_to_zero
+      - name: user_first_order_date
+        tests:
+          - valid_date
+      - name: user_last_order_date
+        tests:
+          - valid_date
+      - name: user_days_since_last_order
+        tests:
+          - positive_or_equal_to_zero
+      - name: user_orders_count
+        tests:
+          - positive_or_equal_to_zero
+   
+  - name: fact_orders
+    description: "Fact table with details of all orders"
+    columns:  
+      - name: order_uuid
+        tests:
+          - unique
+          - not_null
+      - name: user_uuid
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_users')
+              field: user_uuid 
+      - name: order_date
+        tests:
+          - valid_date
+      - name: order_delivery_address
+      - name: order_tracking_uuid
+      - name: order_shipping_service
+        tests:
+          - only_letters
+      - name: order_delivery_date
+        tests:
+          - valid_date
+      - name: orders_days_to_deliver
+        tests:
+          - only_digits
+      - name: order_total_cost_paid_by_client
+        tests:
+          - strictly_positive
+      - name: order_product_cost_paid_by_client
+      - name: order_shippping_cost_paid_by_client
+        tests:
+            - strictly_positive
+      - name: order_greenery_revenue
+      - name: order_greenery_cost
+        tests:
+            - strictly_positive
+      - name: order_greenery_margin
+        tests:
+            - only_digits
+      - name: order_promo_name
+        tests:
+            - only_letters
+      - name: order_promo_discount
+        tests:
+            - only_digits
+      - name: order_product_types
+        tests:
+          - only_digits
+          - positive_or_equal_to_zero
+      - name: order_quantity_of_products
+        tests:
+          - only_digits
+          - positive_or_equal_to_zero 
+
+  - name: int_order_items_metrics
+    description: "Intermediate table to count the distinct product_types per order 
+                  and to count the total products purchased per order. 
+                  This table should not be used by data analysts"
+    columns:  
+      - name: order_uuid
+        tests:
+          - not_null
+      - name: order_product_types
+        tests:
+          - strictly_positive
+      - name: order_quantity_of_products
+        tests:
+          - strictly_positive
+
+  - name: count_any_metric_for_any_dim_any_model
+
+
+      

@@ -1,0 +1,150 @@
+
+version: 2
+
+models:
+
+  - name: int_user_order_metrics
+    description: "Intermediate table to calculate user metrics related to web visits and orders.              and to count the total products purchased per order. 
+                  This table should not be used by data analysts"
+    columns:  
+      - name: user_uuid
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_users')
+              field: user_uuid 
+      - name: user_first_name
+        tests:
+          - only_letters
+      - name: user_last_name
+        tests:
+          - only_letters
+      - name: user_email
+      - name: user_phone_number
+      - name: user_creation_date
+        tests:
+          - valid_date
+      - name: user_last_update_date
+        tests:
+          - valid_date
+      - name: user_address
+        tests:
+          - not_null 
+      - name: user_zipcode
+        tests:
+          - only_digits
+      - name: user_state
+      - name: user_country
+      - name: order_uuid
+        tests:
+          - unique
+          - not_null
+      - name: order_date
+        tests:
+          - valid_date
+      - name: order_product_types
+        tests:
+          - only_digits
+          - positive_or_equal_to_zero
+      - name: order_quantity_of_products
+        tests:
+          - only_digits
+          - positive_or_equal_to_zero 
+      - name: order_cost
+        tests:
+          - strictly_positive
+      - name: order_shipping_cost
+        tests:
+          - strictly_positive
+      - name: order_total
+        tests:
+          - strictly_positive
+      - name: order_tracking_uuid
+      - name: order_shipping_service
+        tests:
+          - only_letters
+      - name: order_expected_delivery_date
+        tests:
+          - valid_date
+      - name: order_delivery_date
+        tests:
+          - valid_date
+      - name: order_status
+        tests:
+          - only_letters    
+
+  - name: fact_user_orders
+    description: "Fact table with users and various user metrics related to web visits and orders."
+    columns:  
+      - name: user_uuid
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_users')
+              field: user_uuid 
+      - name: user_first_name
+        tests:
+          - only_letters
+      - name: user_last_name
+        tests:
+          - only_letters
+      - name: user_email
+      - name: user_phone_number
+      - name: user_creation_date
+        tests:
+          - valid_date
+      - name: user_last_update_date
+        tests:
+          - valid_date
+      - name: order_uuid
+        tests:
+          - unique
+          - not_null
+      - name: order_date
+        tests:
+          - valid_date
+      - name: order_delivery_address
+      - name: order_tracking_uuid
+      - name: order_shipping_service
+        tests:
+          - only_letters
+      - name: order_status
+        tests:
+          - only_letters
+      - name: order_expected_delivery_date
+        tests:
+          - valid_date
+      - name: order_tracking_uuid
+      - name: order_shipping_service
+        tests:
+          - only_letters
+      - name: order_delivery_date
+        tests:
+          - valid_date
+      - name: orders_days_to_deliver
+        tests:
+          - only_digits
+      - name: order_total_cost_paid_by_client
+        tests:
+          - strictly_positive
+      - name: order_product_cost_paid_by_client
+      - name: order_shippping_cost_paid_by_client
+        tests:
+            - strictly_positive
+      - name: order_greenery_revenue
+      - name: order_greenery_cost
+        tests:
+            - strictly_positive
+      - name: order_greenery_margin
+        tests:
+            - only_digits
+      - name: order_product_types
+        tests:
+          - only_digits
+          - positive_or_equal_to_zero
+      - name: order_quantity_of_products
+        tests:
+          - only_digits
+          - positive_or_equal_to_zero 
+
+  

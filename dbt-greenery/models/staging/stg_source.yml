@@ -1,0 +1,41 @@
+version: 2
+
+sources:
+
+  - name: greenery_data_sources # name of the source 
+    schema: public # this is the schema our raw data lives in
+    database: dbt # this is the name of our database
+
+    quoting:
+      database: false
+      schema: false
+      identifier: false
+
+    freshness:
+      warn_after: {count: 24, period: hour}
+      error_after: {count: 48, period: hour}
+
+    tables:
+      - name: users 
+        loaded_at_field: created_at
+        description: Contains all our customers.
+
+      - name: addresses 
+        description: Contains the address of each customer.
+
+      - name: events 
+        loaded_at_field: created_at
+        description: Contains events from all customer actions on the booking flow.
+
+      - name: orders 
+        loaded_at_field: created_at
+        description: Contains orders from customers.
+
+      - name: order_items 
+        description: Contains product types & product quantities per order_id.
+
+      - name: products 
+        description: Contains name, price & quantity in stock for each product type.
+        
+      - name: promos 
+        description: Contains discount types and % discount for each promotional offer.

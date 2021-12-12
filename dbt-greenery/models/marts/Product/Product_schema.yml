@@ -1,0 +1,51 @@
+version: 2
+
+models:
+  
+  - name: fact_web_metrics_per_event_type
+    description: "Fact table to calculate users, web events and web sessions per event_type."
+    columns:
+    - name: event_type
+      tests:
+        - not_null
+        - unique
+        - only_letters
+    - name: users
+      tests:
+        - positive_or_equal_to_zero
+    - name: web_sessions
+      tests:
+        - positive_or_equal_to_zero
+    - name: web_events
+      tests:
+        - positive_or_equal_to_zero
+      
+  - name: fact_web_events_per_url_page
+    description: "Fact table to calcule web metrics for each url of the website."
+    columns:
+      - name: web_url
+        tests:
+          - not_null
+          - unique
+      - name: events
+        tests:
+          - positive_or_equal_to_zero
+      - name: page_view_events
+        tests:
+          - positive_or_equal_to_zero
+      - name: add_to_cart_events
+        tests:
+          - positive_or_equal_to_zero
+      - name: delete_from_cart_events
+        tests:
+          - positive_or_equal_to_zero
+      - name: checkout_events
+        tests:
+          - positive_or_equal_to_zero
+      - name: package_shipped_events
+        tests:
+          - positive_or_equal_to_zero
+
+  - name: fact_web_events_per_session
+
+  - name: metric_conversion_per_product
